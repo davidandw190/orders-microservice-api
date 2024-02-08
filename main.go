@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
 
 	"github.com/davidandw190/orders-microservice-api/service"
 )
@@ -10,7 +12,10 @@ import (
 func main() {
 	service := service.New()
 
-	err := service.Start(context.TODO())
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+
+	err := service.Start(ctx)
 	if err != nil {
 		fmt.Println("failed to start service:", err)
 	}
